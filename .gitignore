@@ -68,3 +68,9 @@ dkms.conf
 **/.settings/bundles.store.json
 **/.settings/ide.store.json
 **/.vscode/c_cpp_properties.json
+
+# STM32CubeIDE local state
+**/.settings/bundles-lock.store.json
+
+# VS Code local settings
+**/.vscode/settings.json
