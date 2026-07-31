@@ -18,6 +18,7 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include "stm32f4xx_hal_gpio.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -42,7 +43,10 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
+GPIO_TypeDef *led_ports[] = {LED_1_GPIO_Port, LED_2_GPIO_Port, LED_3_GPIO_Port,
+                             LED_4_GPIO_Port, LED_5_GPIO_Port};
 
+uint16_t led_pins[] = {LED_1_Pin, LED_2_Pin, LED_3_Pin, LED_4_Pin, LED_5_Pin};
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -87,12 +91,24 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   /* USER CODE BEGIN 2 */
-
+  const uint8_t count = sizeof(led_ports) / sizeof(led_ports[0]);
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1) {
+    for (uint8_t i = 0; i < count; i++) {
+      HAL_GPIO_WritePin(led_ports[i], led_pins[i], GPIO_PIN_SET);
+      HAL_Delay(100);
+      HAL_GPIO_WritePin(led_ports[i], led_pins[i], GPIO_PIN_RESET);
+    }
+
+    for (int i = (int)count - 2; i >= 1; i--) {
+      HAL_GPIO_WritePin(led_ports[i], led_pins[i], GPIO_PIN_SET);
+      HAL_Delay(100);
+      HAL_GPIO_WritePin(led_ports[i], led_pins[i], GPIO_PIN_RESET);
+    }
+
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -201,10 +217,6 @@ void Error_Handler(void)
   /* User can add his own implementation to report the HAL error return state */
   __disable_irq();
   while (1) {
-    HAL_GPIO_WritePin(LED_RED_GPIO_Port, LED_RED_Pin, GPIO_PIN_SET);
-    HAL_Delay(200);
-    HAL_GPIO_WritePin(LED_RED_GPIO_Port, LED_RED_Pin, GPIO_PIN_RESET);
-    HAL_Delay(200);
   }
   /* USER CODE END Error_Handler_Debug */
 }
