@@ -63,3 +63,8 @@ dkms.conf
 
 # macOS
 .DS_Store
+
+# Visual Studio Code
+**/.settings/bundles.store.json
+**/.settings/ide.store.json
+**/.vscode/c_cpp_properties.json
