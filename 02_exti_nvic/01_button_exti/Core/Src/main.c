@@ -94,6 +94,7 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
+     /* Button events are handled by EXTI interrupts. */
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -197,6 +198,23 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
+void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
+{
+    static uint32_t last_interrupt_time = 0;
+
+    if (GPIO_Pin == USER_BUTTON_Pin)
+    {
+        uint32_t current_time = HAL_GetTick();
+
+        if ((current_time - last_interrupt_time) >= 50U)
+        {
+            HAL_GPIO_TogglePin(LED_GREEN_GPIO_Port,
+                               LED_GREEN_Pin);
+
+            last_interrupt_time = current_time;
+        }
+    }
+}
 
 /* USER CODE END 4 */
 
