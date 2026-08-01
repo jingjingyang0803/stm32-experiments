@@ -42,7 +42,7 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-
+volatile uint32_t button_press_count = 0;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -87,13 +87,30 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   /* USER CODE BEGIN 2 */
-
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
+    if (HAL_GPIO_ReadPin(USER_BUTTON_GPIO_Port,
+                         USER_BUTTON_Pin) == GPIO_PIN_RESET)
+    {
+        HAL_Delay(20);   // simple debounce
+
+        if (HAL_GPIO_ReadPin(USER_BUTTON_GPIO_Port,
+                             USER_BUTTON_Pin) == GPIO_PIN_RESET)
+        {
+            HAL_GPIO_TogglePin(LED_GREEN_GPIO_Port,
+                               LED_GREEN_Pin);
+            button_press_count++;
+            // wait for button release
+            while (HAL_GPIO_ReadPin(USER_BUTTON_GPIO_Port,
+                                    USER_BUTTON_Pin) == GPIO_PIN_RESET)
+            {
+            }
+        }
+    }
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
