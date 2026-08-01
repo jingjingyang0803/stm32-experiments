@@ -94,6 +94,22 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
+    GPIO_PinState tilt_state;
+
+    tilt_state = HAL_GPIO_ReadPin(TILT_SENSOR_GPIO_Port,
+                                  TILT_SENSOR_Pin);
+
+    /* Internal gravity switch is closed. */
+    if (tilt_state == GPIO_PIN_RESET)
+    {
+        BUZZER_ON();
+    }
+    else
+    {
+        BUZZER_OFF();
+    }
+
+    HAL_Delay(10);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -188,7 +204,7 @@ static void MX_GPIO_Init(void)
   HAL_GPIO_Init(BUZZER_GPIO_Port, &GPIO_InitStruct);
 
   /* USER CODE BEGIN MX_GPIO_Init_2 */
-
+  BUZZER_OFF();
   /* USER CODE END MX_GPIO_Init_2 */
 }
 
