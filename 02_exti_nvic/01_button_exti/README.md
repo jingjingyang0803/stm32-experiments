@@ -1,86 +1,31 @@
-# 01_button_exti
+# Running LEDs
 
-This experiment uses the onboard USER button of the NUCLEO-F446RE to toggle the onboard green LED through an external interrupt.
+## Objectives
 
-The USER button is connected to `PC13`, and the green LED is connected to `PA5`.
+- Configure multiple GPIO pins as digital outputs.
+- Control multiple LEDs independently.
+- Store LED GPIO ports and pins in arrays.
+- Use loops to reduce repeated GPIO operations.
+- Create a bidirectional running-light pattern.
+- Understand how software delays affect the animation speed.
 
 ## Hardware
 
-- NUCLEO-F446RE
-- USB cable
+- Board: NUCLEO-F446RE
+- Multiple external LEDs
+- Current-limiting resistors
+- Breadboard and jumper wires
 
-No external components are required.
+## Expected Behavior
 
-## GPIO configuration
+The LEDs turn on one after another from the first LED to the last LED.
 
-### USER_BUTTON
+After reaching the last LED, the sequence reverses and moves back toward the first LED.
 
-- Pin: `PC13`
-- Mode: `GPIO_EXTI13`
-- Trigger: Rising edge
-- Pull-up/Pull-down: `No pull`
-- User Label: `USER_BUTTON`
-
-On the NUCLEO-F446RE, the USER button input is low while the button is pressed and returns high when the button is released. Therefore, the interrupt is configured for a rising edge so that the LED state changes when the button is released.
+The back-and-forth running-light pattern repeats continuously.
 
 ```text
-Button pressed:  LOW
-Button released: LOW -> HIGH
+LED1 → LED2 → LED3 → LED4 → LED5 → LED4 → LED3 → LED2 → LED1 → ...
 ```
 
-### LED_GREEN
-
-- Pin: `PA5`
-- Mode: `GPIO_Output`
-- Output type: `Push-Pull`
-- Pull-up/Pull-down: `No pull`
-- Speed: `Low`
-- Initial output level: `Low`
-- User Label: `LED_GREEN`
-
-## NVIC configuration
-
-Enable:
-
-```
-EXTI line[15:10] interrupts
-```
-
-`PC13` uses EXTI line 13. EXTI lines 10 through 15 share the same NVIC interrupt handler:
-
-```
-EXTI15_10_IRQn
-```
-
-## Interrupt flow
-
-```
-PC13 rising edge on button release
--> EXTI13 interrupt request
--> NVIC handles EXTI15_10_IRQn
--> EXTI15_10_IRQHandler()
--> HAL_GPIO_EXTI_IRQHandler()
--> HAL_GPIO_EXTI_Callback()
-```
-
-## Software debounce
-
-Mechanical buttons may generate several rapid signal transitions when they are pressed or released. This is called contact bounce.
-
-The interrupt callback uses `HAL_GetTick()` to ignore events that occur within 50 milliseconds of the previous accepted release.
-
-The debounce implementation is located in `main.c`.
-
-Do not use `HAL_Delay()` inside the interrupt callback because it blocks interrupt processing and depends on the system tick.
-
-## Behavior
-
-Each valid button release toggles the onboard green LED:
-
-```
-First release  -> LED on
-Second release -> LED off
-Third release  -> LED on
-```
-
-The button is handled through an external interrupt rather than continuous polling.
+The LED GPIO ports and pins are stored in arrays, allowing each LED to be accessed by its array index and controlled using loops. The number of LEDs can be changed by adding or removing array elements without rewriting the control logic.
